@@ -4,12 +4,12 @@ function solution(input) {
     const operations = input.split(" ");
 
     let offsetNumber = 0;
-    let usedNumbers = [0];
+    let usedNumbers = [offsetNumber];
     let solution = null;
 
     while (solution === null) {
-        for(let x = 0; x < operations.length; x++) {
-            offsetNumber += parseInt(operations[x]);
+        for(const operation of operations) {
+            offsetNumber += parseInt(operation);
 
             if (usedNumbers.includes(offsetNumber)) {
                 solution = offsetNumber;
