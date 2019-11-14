@@ -13,7 +13,7 @@ function solution(input) {
 
         for (let posLeft = claim[1]; posLeft < claim[1]+claim[3]; posLeft++) {
             for (let posTop = claim[2]; posTop < claim[2]+claim[4]; posTop++) {
-                let position = posLeft + 'x' + posTop;
+                let position = [posLeft,posTop];
 
                 if (claimed.has(position)) {
                     claimedTwice.add(position);
