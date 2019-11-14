@@ -2,29 +2,28 @@ let input = "luojygedpvsthptkxiwnaorzmq lucjqgedppsbhftkxiwnaorlmq lucjmgefpvsbh
 
 function solution(input) {
     let boxes = input.split(/ /g);
-    let index = 0;
     let length = boxes[0].length;
 
-    while (true) {
-        for(let firstBoxIndex = 0; firstBoxIndex < boxes.length; firstBoxIndex++) {
-            for (let secondBoxIndex = index; secondBoxIndex < boxes.length; secondBoxIndex++) {
-                let differences = [];
-                let firstBox = boxes[firstBoxIndex];
-                let secondBox = boxes[secondBoxIndex];
+    for(let firstBoxIndex = 0; firstBoxIndex < boxes.length; firstBoxIndex++) {
+        for (let secondBoxIndex = firstBoxIndex + 1; secondBoxIndex < boxes.length; secondBoxIndex++) {
+            let difference = null;
+            let differences = 0;
+            let firstBox = boxes[firstBoxIndex];
+            let secondBox = boxes[secondBoxIndex];
 
-                for (let letterIndex = 0; letterIndex < length; letterIndex++) {
-                    if (firstBox[letterIndex] !== secondBox[letterIndex]) {
-                        differences.push(letterIndex);
+            for (let letterIndex = 0; letterIndex < length; letterIndex++) {
+                if (firstBox[letterIndex] !== secondBox[letterIndex]) {
+                    difference = letterIndex;
+                    differences++;
 
-                        if (differences.length > 1) {
-                            break;
-                        }
+                    if (differences > 1) {
+                        break;
                     }
                 }
+            }
 
-                if (differences.length === 1) {
-                    return firstBox.slice(0, differences[0]) + firstBox.slice(differences[0] + 1);
-                }
+            if (differences === 1) {
+                return firstBox.slice(0, difference) + firstBox.slice(difference + 1);
             }
         }
     }
