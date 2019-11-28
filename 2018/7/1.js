@@ -2,8 +2,6 @@ const input = 'Step J must be finished before step E can begin.|Step X must be f
 
 function solution(input) {
     input = input.split('|');
-
-    let stepsComplete = new Set([]);
     let steps = {};
     let orderOfSteps = '';
 
@@ -33,7 +31,6 @@ function solution(input) {
         for (let step in orderedSteps) {
             if (!orderedSteps[step].size) {
                 orderOfSteps = orderOfSteps + step;
-                stepsComplete.add(step);
                 delete orderedSteps[step];
                 count = count - 1;
 
