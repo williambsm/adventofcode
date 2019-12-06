@@ -14,7 +14,7 @@ function solution(input) {
         testAddresses[1] = noun;
         testAddresses[2] = verb;
 
-        solution = computer.readIntcode(testAddresses);
+        solution = computer.readIntcode(testAddresses)[0];
 
         if (solution === 19690720) {
             return 100 * noun + verb;
