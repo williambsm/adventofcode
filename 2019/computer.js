@@ -1,93 +1,163 @@
-module.exports = {
-    readIntcode: function (intcode, param = null) {
-        for (let index = 0; index < intcode.length; index = index + 1) {
-            let instruction;
-            let parameters = [];
+module.exports = class Computer {
+    constructor(intcode) {
+        // The computer intcode.
+        this.intcode = intcode;
+        // The computer pointer.
+        this.pointer = 0;
+        // The computer setting.
+        this.setting = null;
+        // The computer input.
+        this.input   = null;
+        // The computer output.
+        this.output  = null;
+        // If the computer setting is set.
+        this.set = false;
+        // If the computer is halted.
+        this.halted = false;
+        // if the computer is done.
+        this.done = false;
+        // If the computer is in debug mode.
+        this.debug = false;
+    }
 
-            if (intcode[index] > 99) {
-                let operation = ('' + intcode[index]).split('').map(Number).reverse();
+    run() {
+        // Remove halt.
+        this.halted = false;
 
-                instruction = operation[0];
+        // Keep running until the computer is halted or paused.
+        while (!this.halted && !this.done) {
+            // Get instructions.
+            let instructions = this.read();
+            // Read instructions.
+            this.operate(instructions);
 
-                if (instruction === 1 ||
-                    instruction === 2 ||
-                    instruction === 5 ||
-                    instruction === 6 ||
-                    instruction === 7 ||
-                    instruction === 8) {
-                    if (typeof operation[2] === 'undefined' || operation[2] === 0) {
-                        parameters[0] = intcode[intcode[index + 1]];
-                    } else {
-                        parameters[0] = intcode[index + 1];
-                    }
-
-                    if (typeof operation[3] === 'undefined' || operation[3] === 0) {
-                        parameters[1] = intcode[intcode[index + 2]];
-                    } else {
-                        parameters[1] = intcode[index + 2];
-                    }
-
-                    parameters[2] = intcode[index + 3];
-                } else {
-                    if (typeof operation[2] === 'undefined' || operation[2] === 0) {
-                        parameters[0] = intcode[index + 1];
-                    } else {
-                        parameters[0] = index + 1;
-                    }
-                }
-            } else {
-                instruction = intcode[index];
-
-                if (instruction === 1 ||
-                    instruction === 2 ||
-                    instruction === 5 ||
-                    instruction === 6 ||
-                    instruction === 7 ||
-                    instruction === 8) {
-                    parameters[0] = intcode[intcode[index + 1]];
-                    parameters[1] = intcode[intcode[index + 2]];
-                    parameters[2] = intcode[index + 3];
-                } else {
-                    parameters[0] = intcode[index + 1];
-                }
-            }
-
-            // Go through the instruction code.
-            switch(instruction) {
-                case 1: // adds together numbers read from two positions and stores the result in a third position.
-                    intcode[parameters[2]] = parameters[0] + parameters[1];
-                    index = index + 3;
-                    break;
-                case 2: // multiplies together numbers read from two positions and stores the result in a third position.
-                    intcode[parameters[2]] = parameters[0] * parameters[1];
-                    index = index + 3;
-                    break;
-                case 3: // takes a single integer as input and saves it to the position given by its only parameter.
-                    intcode[parameters[0]] = param;
-                    index = index + 1;
-                    break;
-                case 4: // outputs the value of its only parameter.
-                    console.log('Output: ' + intcode[parameters[0]]);
-                    index = index + 1;
-                    break;
-                case 5: // if the first parameter is non-zero, it sets the instruction pointer to the value from the second parameter. Otherwise, it does nothing.
-                    index = (parameters[0] !== 0) ? parameters[1] - 1 : index + 2;
-                    break;
-                case 6: // if the first parameter is zero, it sets the instruction pointer to the value from the second parameter. Otherwise, it does nothing.
-                    index = (parameters[0] === 0) ? parameters[1] - 1 : index + 2;
-                    break;
-                case 7: // if the first parameter is less than the second parameter, it stores 1 in the position given by the third parameter. Otherwise, it stores 0.
-                    intcode[parameters[2]] = (parameters[0] < parameters[1]) ? 1 : 0;
-                    index = index + 3
-                    break;
-                case 8: // if the first parameter is equal to the second parameter, it stores 1 in the position given by the third parameter. Otherwise, it stores 0.
-                    intcode[parameters[2]] = (parameters[0] === parameters[1]) ? 1 : 0;
-                    index = index + 3;
-                    break;
-                case 99: // the program is finished and should immediately halt.
-                default:
-                    return intcode;
+            if (this.debug === true) {
+                console.log('Pointer: ' + this.pointer);
+                console.log('Instruction: ' + instructions.instruction);
+                console.log('---------------');
             }
         }
+
+        // Return output.
+        return this.output;
     }
-}
+
+    read() {
+        let instruction;
+        let parameters = [];
+
+        if (this.intcode[this.pointer] > 99) {
+            let operation = ('' + this.intcode[this.pointer]).split('').map(Number).reverse();
+
+            instruction = operation[0];
+
+            if (instruction === 1 ||
+                instruction === 2 ||
+                instruction === 5 ||
+                instruction === 6 ||
+                instruction === 7 ||
+                instruction === 8) {
+                if (typeof operation[2] === 'undefined' || operation[2] === 0) {
+                    parameters[0] = this.intcode[this.intcode[this.pointer + 1]];
+                } else {
+                    parameters[0] = this.intcode[this.pointer + 1];
+                }
+
+                if (typeof operation[3] === 'undefined' || operation[3] === 0) {
+                    parameters[1] = this.intcode[this.intcode[this.pointer + 2]];
+                } else {
+                    parameters[1] = this.intcode[this.pointer + 2];
+                }
+
+                parameters[2] = this.intcode[this.pointer + 3];
+            } else {
+                if (typeof operation[2] === 'undefined' || operation[2] === 0) {
+                    parameters[0] = this.intcode[this.pointer + 1];
+                } else {
+                    parameters[0] = this.pointer + 1;
+                }
+            }
+        } else {
+            instruction = this.intcode[this.pointer];
+
+            if (instruction === 1 ||
+                instruction === 2 ||
+                instruction === 5 ||
+                instruction === 6 ||
+                instruction === 7 ||
+                instruction === 8) {
+                parameters[0] = this.intcode[this.intcode[this.pointer + 1]];
+                parameters[1] = this.intcode[this.intcode[this.pointer + 2]];
+                parameters[2] = this.intcode[this.pointer + 3];
+            } else {
+                parameters[0] = this.intcode[this.pointer + 1];
+            }
+        }
+
+        return {instruction: instruction, parameters: parameters};
+    }
+
+    operate(instructions) {
+        // adds together numbers read from two positions and stores the result in a third position.
+        if (instructions.instruction === 1) {
+            this.intcode[instructions.parameters[2]] = instructions.parameters[0] + instructions.parameters[1];
+            this.pointer = this.pointer + 4;
+        }
+
+        // multiplies together numbers read from two positions and stores the result in a third position.
+        else if (instructions.instruction === 2) {
+            this.intcode[instructions.parameters[2]] = instructions.parameters[0] * instructions.parameters[1];
+            this.pointer = this.pointer + 4;
+        }
+
+        // takes a single integer as input and saves it to the position given by its only parameter.
+        else if (instructions.instruction === 3 ) {
+            // Check if there is a setting or if the computer is already set.
+            if (!this.set && this.setting !== null) {
+                // Set the computer.
+                this.intcode[instructions.parameters[0]] = this.setting;
+                this.set = true;
+            } else {
+                // Save the input to location.
+                this.intcode[instructions.parameters[0]] = this.input;
+            }
+
+            this.pointer = this.pointer + 2;
+        }
+
+        // outputs the value of its only parameter.
+        else if (instructions.instruction === 4) {
+            this.output = this.intcode[instructions.parameters[0]];
+            this.halted = true;
+
+            this.pointer = this.pointer + 2;
+        }
+
+        // if the first parameter is non-zero, it sets the instruction pointer to the value from the second parameter. Otherwise, it does nothing.
+        else if (instructions.instruction === 5) {
+            this.pointer = (instructions.parameters[0] !== 0) ? instructions.parameters[1] : this.pointer + 3;
+        }
+
+        // if the first parameter is zero, it sets the instruction pointer to the value from the second parameter. Otherwise, it does nothing.
+        else if (instructions.instruction === 6) {
+            this.pointer = (instructions.parameters[0] === 0) ? instructions.parameters[1] : this.pointer + 3;
+        }
+
+        // if the first parameter is less than the second parameter, it stores 1 in the position given by the third parameter. Otherwise, it stores 0.
+        else if (instructions.instruction === 7) {
+            this.intcode[instructions.parameters[2]] = (instructions.parameters[0] < instructions.parameters[1]) ? 1 : 0;
+            this.pointer = this.pointer + 4;
+        }
+
+        // if the first parameter is equal to the second parameter, it stores 1 in the position given by the third parameter. Otherwise, it stores 0.
+        else if (instructions.instruction === 8) {
+            this.intcode[instructions.parameters[2]] = (instructions.parameters[0] === instructions.parameters[1]) ? 1 : 0;
+            this.pointer = this.pointer + 4;
+        }
+
+        // the program is finished and should immediately halt.
+        else if (instructions.instruction === 99) {
+            this.done = true;
+        }
+    }
+};

@@ -1,12 +1,20 @@
 const reader = require('../../reader.js');
-const computer = require('../computer.js');
+const computerClass = require('../computer.js');
 
 function solution(input) {
-    input = input.split(',').map(Number);
+    // Get intcode.
+    const intcode = input.split(',').map(Number);
+    // Initiate computer.
+    let computer = new computerClass(intcode);
 
-    computer.readIntcode(input, 5);
+    // Set input.
+    computer.input = 5;
 
-    return true;
+    // Run computer;
+    computer.run();
+
+    // Return result.
+    return computer.output;
 }
 
 reader.solve(solution);

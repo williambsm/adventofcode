@@ -1,5 +1,5 @@
 const reader = require('../../reader.js');
-const computer = require('../computer.js');
+const computerClass = require('../computer.js');
 
 function solution(input) {
     let addresses = input.split(',').map(Number);
@@ -7,16 +7,20 @@ function solution(input) {
     let verb = 0;
 
     while (true) {
-        let solution = 0;
+        // Refresh intcode.
+        let intcode = addresses.slice();
+        // Initiate computer;
+        let computer = new computerClass(intcode);
 
-        let testAddresses = addresses.slice();
+        // Update intcode.
+        computer.intcode[1] = noun;
+        computer.intcode[2] = verb;
 
-        testAddresses[1] = noun;
-        testAddresses[2] = verb;
+        // Run computer.
+        computer.run();
 
-        solution = computer.readIntcode(testAddresses)[0];
-
-        if (solution === 19690720) {
+        // Compare result.
+        if (computer.intcode[0] === 19690720) {
             return 100 * noun + verb;
         } else {
             if (verb === 99) {

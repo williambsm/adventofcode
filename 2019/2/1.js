@@ -1,13 +1,21 @@
 const reader = require('../../reader.js');
-const computer = require('../computer.js');
+const computerClass = require('../computer.js');
 
 function solution(input) {
-    let rows = input.split(',').map(Number);
+    // Get intcode.
+    let intcode = input.split(',').map(Number);
+    // Initiate computer.
+    let computer = new computerClass(intcode);
 
-    rows[1] = 12;
-    rows[2] = 2;
+    // Update intcode.
+    computer.intcode[1] = 12;
+    computer.intcode[2] = 2;
 
-    return computer.readIntcode(rows)[0];
+    // Run computer.
+    computer.run();
+
+    // Return result.
+    return computer.intcode[0];
 }
 
 reader.solve(solution);
