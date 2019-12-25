@@ -1,29 +1,69 @@
 const reader = require('../../reader.js');
-const computer = require('../computer.js');
+const computerClass = require('../computer.js');
 
 function solution(input) {
-    //const program = input.split(',').map(Number);
-    //const program = "3,26,1001,26,-4,26,3,27,1002,27,2,27,1,27,26,27,4,27,1001,28,-1,28,1005,28,6,99,0,0,5".split(',').map(Number);
-    const program = "3,52,1001,52,-5,52,3,53,1,52,56,54,1007,54,5,55,1005,55,26,1001,54,-5,54,1105,1,12,1,53,54,53,1008,54,0,55,1001,55,1,55,2,53,55,53,4,53,1001,56,-1,56,1005,56,6,99,0,0,0,0,10".split(',').map(Number);
+    // Get the intcode.
+    const intcode = input.split(',').map(Number);
+    // Init power and computers.
+    let ampComputer1, ampComputer2, ampComputer3, ampComputer4, ampComputer5;
+    let power = 0;
 
+    for (let param1 = 5; param1 < 10; param1 = param1 + 1) {
+        for (let param2 = 5; param2 < 10; param2 = param2 + 1) {
+            for (let param3 = 5; param3 < 10; param3 = param3 + 1) {
+                for(let param4 = 5; param4 < 10; param4 = param4 + 1) {
+                    for (let param5 = 5; param5 < 10; param5 = param5 + 1) {
+                        const parameters = new Set([param1, param2, param3, param4, param5]);
 
-    let ampProgram1 = {intcode: program.slice(0), halted: false, output: null, pointer: 0};
-    let ampProgram2 = {intcode: program.slice(0), halted: false, output: null, pointer: 0};
-    let ampProgram3 = {intcode: program.slice(0), halted: false, output: null, pointer: 0};
-    let ampProgram4 = {intcode: program.slice(0), halted: false, output: null, pointer: 0};
-    let ampProgram5 = {intcode: program.slice(0), halted: false, output: 0, pointer: 0};
+                        if (parameters.size < 5) {
+                            continue;
+                        }
 
-    while (!ampProgram5.halted) {
-        ampProgram1 = computer.readIntcode(ampProgram1.intcode, 9, ampProgram5.output, ampProgram1.pointer);
-        ampProgram2 = computer.readIntcode(ampProgram2.intcode, 7, ampProgram1.output, ampProgram2.pointer);
-        ampProgram3 = computer.readIntcode(ampProgram3.intcode, 8, ampProgram2.output, ampProgram3.pointer);
-        ampProgram4 = computer.readIntcode(ampProgram4.intcode, 5, ampProgram3.output, ampProgram4.pointer);
-        ampProgram5 = computer.readIntcode(ampProgram5.intcode, 6, ampProgram4.output, ampProgram5.pointer);
+                        // Start up all the reactors.
+                        ampComputer1 = new computerClass(intcode.slice(0));
+                        ampComputer2 = new computerClass(intcode.slice(0));
+                        ampComputer3 = new computerClass(intcode.slice(0));
+                        ampComputer4 = new computerClass(intcode.slice(0));
+                        ampComputer5 = new computerClass(intcode.slice(0));
 
-        console.log(ampProgram5.output);
+                        // Set phase settings.
+                        ampComputer1.setting = param1;
+                        ampComputer2.setting = param2;
+                        ampComputer3.setting = param3;
+                        ampComputer4.setting = param4;
+                        ampComputer5.setting = param5;
+
+                        // Set output to 0 for ampComputer5.
+                        ampComputer5.output = 0;
+
+                        // Run the computers.
+                        while (!ampComputer5.done) {
+                            ampComputer1.input = ampComputer5.output;
+                            ampComputer1.run();
+
+                            ampComputer2.input = ampComputer1.output;
+                            ampComputer2.run();
+
+                            ampComputer3.input = ampComputer2.output;
+                            ampComputer3.run();
+
+                            ampComputer4.input = ampComputer3.output;
+                            ampComputer4.run();
+
+                            ampComputer5.input = ampComputer4.output;
+                            ampComputer5.run();
+                        }
+
+                        if (ampComputer5.output > power) {
+                            power = ampComputer5.output;
+                        }
+                    }
+                }
+            }
+        }
     }
 
-    return ampProgram5.output;
+    return power;
 }
 
 reader.solve(solution);
