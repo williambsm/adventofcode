@@ -7,11 +7,10 @@ function solution(input) {
     for (let x = 0; x < words.length; x = x + 1) {
         let string = words[x];
 
-        let test1 = string.match(/[^ab]|[^cd]|[^pq]|[^xy]/);
-        let test2 = string.match(/[aeiou].*[aeiou].*[aeiou]/);
-        let test3 = string.match(/(.)\1/);
+        let test1 = string.match(/(..).*\1/);
+        let test2 = string.match(/(.).\1/);
 
-        if (test1 && test2 && test3) {
+        if (test1 && test2) {
             nice = nice + 1;
         }
     }
