@@ -6,11 +6,7 @@ function solution(input) {
     let x = 0;
 
     for (let y = 1; y <= map.length - 1; y = y + 1) {
-        x = x + 3;
-
-        if (x >= map[y].length ) {
-            x = x - map[y].length;
-        }
+        x = (x + 3) % map[y].length;
 
         if (map[y][x] === "#") {
             trees++;
