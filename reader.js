@@ -7,5 +7,13 @@ module.exports = {
         console.time('Time elapsed');
         console.log(solution(input));
         console.timeEnd('Time elapsed');
+    },
+
+    buildLine: function(input) {
+        return input.split('\r\n');
+    },
+
+    buildNewline: function (input) {
+        return input.split('\r\n\r\n');
     }
 }
