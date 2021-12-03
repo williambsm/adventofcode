@@ -1,7 +1,7 @@
 const reader = require('../../reader.js');
 
 function solution(input) {
-    let measurements = input.split('\n').map(Number);
+    let measurements = input.split('\r\n').map(Number);
     let count = 0;
 
     for (let i = 0; i < measurements.length - 3; i = i + 1) {

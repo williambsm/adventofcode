@@ -1,7 +1,7 @@
 const reader = require('../../reader.js');
 
 function solution(input) {
-    const directions = input.split('\n');
+    const directions = input.split('\r\n');
     let x = 0;
     let y = 0;
     let aim = 0;
