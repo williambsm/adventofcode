@@ -16,5 +16,9 @@ module.exports = {
 
     nl: function (input) {
         return input.split('\r\n\r\n');
+    },
+
+    sum: function(array) {
+        return array.reduce((a,b) => a+b, 0);
     }
 }
