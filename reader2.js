@@ -18,6 +18,10 @@ module.exports = {
         return input.split('\r\n\r\n');
     },
 
+    sn: function (input) {
+        return parseInt(input.replace(/\D/g,''));
+    },
+
     sum: function(array) {
         return array.reduce((a,b) => a+b, 0);
     }
